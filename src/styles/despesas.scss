@@ -1,0 +1,332 @@
+.despesas-page {
+  width: 100%;
+}
+
+.despesas-page .page-header {
+  margin-bottom: 24px;
+}
+
+.despesas-page .page-header h1 {
+  margin: 0;
+
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.despesas-page .page-header p {
+  margin: 6px 0 0;
+
+  color: #6c757d;
+}
+
+.despesas-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(420px, 1.1fr);
+  gap: 20px;
+}
+
+.despesa-form-card,
+.despesa-list-card {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 14px;
+  padding: 22px;
+
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 22px;
+}
+
+.section-header h2 {
+  margin: 0;
+
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.section-header p {
+  margin: 5px 0 0;
+
+  color: #6c757d;
+  font-size: 13px;
+}
+
+.despesa-count {
+  min-width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #f1f3f5;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.despesa-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #343a40;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  min-height: 42px;
+
+  padding: 9px 12px;
+
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  font-size: 14px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #86b7fe;
+
+  box-shadow: 0 0 0 3px
+    rgba(13, 110, 253, 0.1);
+}
+
+.money-input {
+  display: flex;
+  align-items: center;
+
+  min-height: 42px;
+
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+
+  overflow: hidden;
+}
+
+.money-input:focus-within {
+  border-color: #86b7fe;
+
+  box-shadow: 0 0 0 3px
+    rgba(13, 110, 253, 0.1);
+}
+
+.money-input span {
+  padding-left: 12px;
+
+  color: #6c757d;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.money-input input {
+  min-height: 40px;
+
+  border: none;
+  box-shadow: none;
+
+  padding-left: 7px;
+}
+
+.money-input input:focus {
+  border: none;
+  box-shadow: none;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  margin-top: 6px;
+}
+
+.form-actions button {
+  min-height: 40px;
+
+  padding: 8px 16px;
+
+  border: none;
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.form-actions button:hover {
+  opacity: 0.9;
+}
+
+.form-actions button:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  background: #0d6efd;
+  color: #ffffff;
+}
+
+.btn-secondary {
+  background: #e9ecef;
+  color: #343a40;
+}
+
+.despesa-alert {
+  padding: 11px 13px;
+
+  margin-bottom: 16px;
+
+  border-radius: 8px;
+
+  font-size: 13px;
+}
+
+.despesa-alert-error {
+  background: #f8d7da;
+  color: #842029;
+}
+
+.despesa-empty {
+  min-height: 260px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  color: #6c757d;
+}
+
+.despesa-empty i {
+  margin-bottom: 12px;
+
+  font-size: 32px;
+}
+
+.despesa-empty h3 {
+  margin: 0;
+
+  color: #343a40;
+
+  font-size: 16px;
+}
+
+.despesa-empty p {
+  max-width: 300px;
+
+  margin: 7px 0 0;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.despesas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.despesa-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+
+  padding: 14px;
+
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+}
+
+.despesa-item > div {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.despesa-item strong {
+  font-size: 14px;
+}
+
+.despesa-item span {
+  color: #6c757d;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .despesas-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .despesa-form-card,
+  .despesa-list-card {
+    padding: 18px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+
+  .despesa-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

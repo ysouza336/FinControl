@@ -1,139 +1,301 @@
-function Dashboard() {
+import { useMemo } from "react";
+
+import { useReceitas } from "../../contexts/ReceitasContext";
+
+import "../../styles/dashboard.scss";
+
+function formatarMoeda(valor) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(valor);
+}
+
+function obterMesAtual() {
+  const agora = new Date();
+
+  return {
+    mes: agora.getMonth(),
+    ano: agora.getFullYear(),
+  };
+}
+
+function receitaPertenceAoMesAtual(data) {
+  if (!data) {
+    return false;
+  }
+
+  const [ano, mes] = data.split("-").map(Number);
+
+  const mesAtual = obterMesAtual();
+
   return (
-    <section className="dashboard-page">
-      <div className="page-heading">
+    ano === mesAtual.ano &&
+    mes - 1 === mesAtual.mes
+  );
+}
+
+function Dashboard() {
+  const {
+    receitas,
+    carregando: carregandoReceitas,
+  } = useReceitas();
+
+  const indicadores = useMemo(() => {
+    const total = receitas.reduce(
+      (acumulado, receita) =>
+        acumulado + Number(receita.valor || 0),
+      0
+    );
+
+    const totalMesAtual = receitas
+      .filter((receita) =>
+        receitaPertenceAoMesAtual(receita.data)
+      )
+      .reduce(
+        (acumulado, receita) =>
+          acumulado + Number(receita.valor || 0),
+        0
+      );
+
+    const totalFixo = receitas
+      .filter((receita) => receita.tipo === "fixa")
+      .reduce(
+        (acumulado, receita) =>
+          acumulado + Number(receita.valor || 0),
+        0
+      );
+
+    const totalVariavel = receitas
+      .filter((receita) => receita.tipo === "variavel")
+      .reduce(
+        (acumulado, receita) =>
+          acumulado + Number(receita.valor || 0),
+        0
+      );
+
+    return {
+      total,
+      totalMesAtual,
+      totalFixo,
+      totalVariavel,
+      quantidade: receitas.length,
+    };
+  }, [receitas]);
+
+  return (
+    <div className="dashboard-page">
+      <div className="page-header">
         <div>
-          <span className="page-eyebrow">Visão geral</span>
           <h1>Dashboard</h1>
+
           <p>
-            Acompanhe sua situação financeira de forma simples e organizada.
+            Acompanhe sua situação financeira.
           </p>
         </div>
-
-        <button className="btn btn-primary">
-          <i className="bi bi-plus-lg"></i>
-          Novo lançamento
-        </button>
       </div>
 
-      <div className="row g-4 mt-1">
-        <div className="col-12 col-md-6 col-xl-3">
-          <div className="summary-card">
-            <div className="summary-card-top">
-              <span>Saldo disponível</span>
-              <div className="summary-icon">
-                <i className="bi bi-wallet2"></i>
-              </div>
-            </div>
-
-            <strong>R$ 0,00</strong>
-
-            <small>
-              <i className="bi bi-info-circle"></i>
-              Nenhum lançamento registrado
-            </small>
+      <section className="dashboard-summary">
+        <article className="dashboard-card dashboard-card-primary">
+          <div className="dashboard-card-icon">
+            <i className="bi bi-wallet2"></i>
           </div>
-        </div>
 
-        <div className="col-12 col-md-6 col-xl-3">
-          <div className="summary-card">
-            <div className="summary-card-top">
-              <span>Entradas</span>
-              <div className="summary-icon">
-                <i className="bi bi-arrow-up"></i>
-              </div>
-            </div>
+          <div>
+            <span>Total de receitas</span>
 
-            <strong>R$ 0,00</strong>
-
-            <small>Este mês</small>
+            <strong>
+              {carregandoReceitas
+                ? "Carregando..."
+                : formatarMoeda(indicadores.total)}
+            </strong>
           </div>
-        </div>
+        </article>
 
-        <div className="col-12 col-md-6 col-xl-3">
-          <div className="summary-card">
-            <div className="summary-card-top">
-              <span>Despesas</span>
-              <div className="summary-icon">
-                <i className="bi bi-arrow-down"></i>
-              </div>
-            </div>
-
-            <strong>R$ 0,00</strong>
-
-            <small>Este mês</small>
+        <article className="dashboard-card">
+          <div className="dashboard-card-icon">
+            <i className="bi bi-calendar-check"></i>
           </div>
-        </div>
 
-        <div className="col-12 col-md-6 col-xl-3">
-          <div className="summary-card">
-            <div className="summary-card-top">
-              <span>Reserva</span>
-              <div className="summary-icon">
-                <i className="bi bi-piggy-bank"></i>
-              </div>
-            </div>
+          <div>
+            <span>Receitas deste mês</span>
 
-            <strong>R$ 0,00</strong>
-
-            <small>Meta de 30%</small>
+            <strong>
+              {carregandoReceitas
+                ? "Carregando..."
+                : formatarMoeda(
+                    indicadores.totalMesAtual
+                  )}
+            </strong>
           </div>
-        </div>
-      </div>
+        </article>
 
-      <div className="row g-4 mt-1">
-        <div className="col-12 col-xl-8">
-          <div className="dashboard-panel">
-            <div className="panel-header">
-              <div>
-                <span>Movimentação</span>
-                <h3>Entradas x Despesas</h3>
-              </div>
+        <article className="dashboard-card">
+          <div className="dashboard-card-icon">
+            <i className="bi bi-arrow-up-circle"></i>
+          </div>
 
-              <button className="panel-filter">
-                Este mês
-                <i className="bi bi-chevron-down"></i>
-              </button>
+          <div>
+            <span>Receitas fixas</span>
+
+            <strong>
+              {carregandoReceitas
+                ? "Carregando..."
+                : formatarMoeda(
+                    indicadores.totalFixo
+                  )}
+            </strong>
+          </div>
+        </article>
+
+        <article className="dashboard-card">
+          <div className="dashboard-card-icon">
+            <i className="bi bi-lightning-charge"></i>
+          </div>
+
+          <div>
+            <span>Receitas variáveis</span>
+
+            <strong>
+              {carregandoReceitas
+                ? "Carregando..."
+                : formatarMoeda(
+                    indicadores.totalVariavel
+                  )}
+            </strong>
+          </div>
+        </article>
+      </section>
+
+      <section className="dashboard-grid">
+        <article className="dashboard-panel">
+          <div className="dashboard-panel-header">
+            <div>
+              <h2>Resumo das receitas</h2>
+
+              <p>
+                Visão geral das receitas cadastradas.
+              </p>
+            </div>
+          </div>
+
+          <div className="dashboard-income-summary">
+            <div className="income-summary-item">
+              <span>Total cadastrado</span>
+
+              <strong>
+                {indicadores.quantidade}
+              </strong>
+
+              <small>receitas</small>
             </div>
 
-            <div className="empty-chart">
-              <i className="bi bi-bar-chart"></i>
-              <strong>Sem dados suficientes</strong>
+            <div className="income-summary-item">
+              <span>Receita fixa</span>
+
+              <strong>
+                {formatarMoeda(
+                  indicadores.totalFixo
+                )}
+              </strong>
+
+              <small>
+                {indicadores.total > 0
+                  ? `${(
+                      (indicadores.totalFixo /
+                        indicadores.total) *
+                      100
+                    ).toFixed(1)}% do total`
+                  : "0% do total"}
+              </small>
+            </div>
+
+            <div className="income-summary-item">
+              <span>Receita variável</span>
+
+              <strong>
+                {formatarMoeda(
+                  indicadores.totalVariavel
+                )}
+              </strong>
+
+              <small>
+                {indicadores.total > 0
+                  ? `${(
+                      (indicadores.totalVariavel /
+                        indicadores.total) *
+                      100
+                    ).toFixed(1)}% do total`
+                  : "0% do total"}
+              </small>
+            </div>
+          </div>
+        </article>
+
+        <article className="dashboard-panel">
+          <div className="dashboard-panel-header">
+            <div>
+              <h2>Próximos módulos</h2>
+
+              <p>
+                Funcionalidades que serão integradas
+                ao dashboard.
+              </p>
+            </div>
+          </div>
+
+          <div className="dashboard-coming-soon">
+            <div>
+              <i className="bi bi-bar-chart-line"></i>
+
               <span>
-                Cadastre suas receitas e despesas para visualizar o gráfico.
+                Despesas
               </span>
             </div>
-          </div>
-        </div>
 
-        <div className="col-12 col-xl-4">
-          <div className="dashboard-panel">
-            <div className="panel-header">
-              <div>
-                <span>Financiamento</span>
-                <h3>Veículo</h3>
-              </div>
-
-              <i className="bi bi-car-front panel-title-icon"></i>
-            </div>
-
-            <div className="financing-empty">
+            <div>
               <i className="bi bi-car-front"></i>
 
-              <strong>Nenhum financiamento</strong>
+              <span>
+                Financiamento
+              </span>
+            </div>
+
+            <div>
+              <i className="bi bi-pie-chart"></i>
 
               <span>
-                Cadastre seu financiamento para acompanhar as parcelas.
+                Relatórios
               </span>
+            </div>
 
-              <button className="btn btn-outline-primary">
-                Cadastrar financiamento
-              </button>
+            <div>
+              <i className="bi bi-piggy-bank"></i>
+
+              <span>
+                Reserva de 30%
+              </span>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
+        </article>
+      </section>
+
+      {receitas.length === 0 && !carregandoReceitas && (
+        <section className="dashboard-empty">
+          <div className="dashboard-empty-icon">
+            <i className="bi bi-wallet"></i>
+          </div>
+
+          <h2>Nenhuma receita cadastrada</h2>
+
+          <p>
+            Cadastre sua primeira receita para começar
+            a acompanhar sua vida financeira pelo
+            Dashboard.
+          </p>
+        </section>
+      )}
+    </div>
   );
 }
 
