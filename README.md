@@ -1,16 +1,58 @@
-# React + Vite
+# 💰 FinControl Pro
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema de gerenciamento financeiro pessoal desenvolvido com React, Vite e Firebase.
 
-Currently, two official plugins are available:
+O objetivo do projeto é centralizar receitas, despesas, financiamento veicular, metas financeiras e relatórios em uma única aplicação.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🚀 Tecnologias
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React
+- Vite
+- React Router DOM
+- Firebase Authentication
+- Firebase Firestore
+- React Hook Form
+- Zod
+- SCSS
+- Bootstrap
+- Bootstrap Icons
+- Recharts
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 📁 Estrutura principal
+
+```text
+src/
+├── components/
+│   ├── Header/
+│   ├── MainLayout/
+│   └── Sidebar/
+│
+├── contexts/
+│   ├── AuthContext.jsx
+│   └── ReceitasContext.jsx
+│
+├── pages/
+│   ├── Dashboard/
+│   ├── Receitas/
+│   ├── Despesas/
+│   ├── Financiamento/
+│   ├── Relatorios/
+│   └── Configuracoes/
+│
+├── services/
+│   ├── firebase.js
+│   ├── firestore.js
+│   └── receitas.js
+│
+├── routes/
+│   └── AppRoutes.jsx
+│
+└── styles/
+    ├── global.scss
+    ├── login.scss
+    ├── receitas.scss
+    └── dashboard.scss
