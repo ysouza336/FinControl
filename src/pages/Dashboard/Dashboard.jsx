@@ -1,302 +1,284 @@
 import { useMemo } from "react";
 
 import { useReceitas } from "../../contexts/ReceitasContext";
+import { useDespesas } from "../../contexts/DespesasContext";
 
-import "../../styles/dashboard.scss";
+import "../../styles/dashboard.scss"
 
 function formatarMoeda(valor) {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(valor);
-}
+  const numero = Number(valor);
 
-function obterMesAtual() {
-  const agora = new Date();
-
-  return {
-    mes: agora.getMonth(),
-    ano: agora.getFullYear(),
-  };
-}
-
-function receitaPertenceAoMesAtual(data) {
-  if (!data) {
-    return false;
+  if (Number.isNaN(numero)) {
+    return "R$ 0,00";
   }
 
-  const [ano, mes] = data.split("-").map(Number);
+  return numero.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+}
 
-  const mesAtual = obterMesAtual();
-
-  return (
-    ano === mesAtual.ano &&
-    mes - 1 === mesAtual.mes
+function obterTotal(lista) {
+  return lista.reduce(
+    (total, item) =>
+      total + Number(item.valor || 0),
+    0
   );
 }
 
-function Dashboard() {
+export default function Dashboard() {
   const {
     receitas,
     carregando: carregandoReceitas,
   } = useReceitas();
 
-  const indicadores = useMemo(() => {
-    const total = receitas.reduce(
-      (acumulado, receita) =>
-        acumulado + Number(receita.valor || 0),
-      0
-    );
+  const {
+    despesas,
+    carregando: carregandoDespesas,
+  } = useDespesas();
 
-    const totalMesAtual = receitas
-      .filter((receita) =>
-        receitaPertenceAoMesAtual(receita.data)
-      )
-      .reduce(
-        (acumulado, receita) =>
-          acumulado + Number(receita.valor || 0),
-        0
-      );
+  const resumoFinanceiro = useMemo(() => {
+    const totalReceitas = obterTotal(receitas);
+    const totalDespesas = obterTotal(despesas);
 
-    const totalFixo = receitas
-      .filter((receita) => receita.tipo === "fixa")
-      .reduce(
-        (acumulado, receita) =>
-          acumulado + Number(receita.valor || 0),
-        0
-      );
+    const saldo = totalReceitas - totalDespesas;
 
-    const totalVariavel = receitas
-      .filter((receita) => receita.tipo === "variavel")
-      .reduce(
-        (acumulado, receita) =>
-          acumulado + Number(receita.valor || 0),
-        0
-      );
+    const percentualDespesas =
+      totalReceitas > 0
+        ? (totalDespesas / totalReceitas) * 100
+        : 0;
 
     return {
-      total,
-      totalMesAtual,
-      totalFixo,
-      totalVariavel,
-      quantidade: receitas.length,
+      totalReceitas,
+      totalDespesas,
+      saldo,
+      percentualDespesas,
     };
-  }, [receitas]);
+  }, [receitas, despesas]);
+
+  const carregando =
+    carregandoReceitas ||
+    carregandoDespesas;
+
+  const saldoPositivo =
+    resumoFinanceiro.saldo >= 0;
 
   return (
-    <div className="dashboard-page">
-      <div className="page-header">
+    <main className="pagina-dashboard">
+      <section className="dashboard-cabecalho">
         <div>
+          <span className="dashboard-cabecalho__eyebrow">
+            Visão geral
+          </span>
+
           <h1>Dashboard</h1>
 
           <p>
-            Acompanhe sua situação financeira.
+            Acompanhe sua situação financeira
+            em um único lugar.
           </p>
         </div>
-      </div>
-
-      <section className="dashboard-summary">
-        <article className="dashboard-card dashboard-card-primary">
-          <div className="dashboard-card-icon">
-            <i className="bi bi-wallet2"></i>
-          </div>
-
-          <div>
-            <span>Total de receitas</span>
-
-            <strong>
-              {carregandoReceitas
-                ? "Carregando..."
-                : formatarMoeda(indicadores.total)}
-            </strong>
-          </div>
-        </article>
-
-        <article className="dashboard-card">
-          <div className="dashboard-card-icon">
-            <i className="bi bi-calendar-check"></i>
-          </div>
-
-          <div>
-            <span>Receitas deste mês</span>
-
-            <strong>
-              {carregandoReceitas
-                ? "Carregando..."
-                : formatarMoeda(
-                    indicadores.totalMesAtual
-                  )}
-            </strong>
-          </div>
-        </article>
-
-        <article className="dashboard-card">
-          <div className="dashboard-card-icon">
-            <i className="bi bi-arrow-up-circle"></i>
-          </div>
-
-          <div>
-            <span>Receitas fixas</span>
-
-            <strong>
-              {carregandoReceitas
-                ? "Carregando..."
-                : formatarMoeda(
-                    indicadores.totalFixo
-                  )}
-            </strong>
-          </div>
-        </article>
-
-        <article className="dashboard-card">
-          <div className="dashboard-card-icon">
-            <i className="bi bi-lightning-charge"></i>
-          </div>
-
-          <div>
-            <span>Receitas variáveis</span>
-
-            <strong>
-              {carregandoReceitas
-                ? "Carregando..."
-                : formatarMoeda(
-                    indicadores.totalVariavel
-                  )}
-            </strong>
-          </div>
-        </article>
       </section>
 
-      <section className="dashboard-grid">
-        <article className="dashboard-panel">
-          <div className="dashboard-panel-header">
-            <div>
-              <h2>Resumo das receitas</h2>
-
-              <p>
-                Visão geral das receitas cadastradas.
-              </p>
-            </div>
-          </div>
-
-          <div className="dashboard-income-summary">
-            <div className="income-summary-item">
-              <span>Total cadastrado</span>
-
-              <strong>
-                {indicadores.quantidade}
-              </strong>
-
-              <small>receitas</small>
-            </div>
-
-            <div className="income-summary-item">
-              <span>Receita fixa</span>
-
-              <strong>
-                {formatarMoeda(
-                  indicadores.totalFixo
-                )}
-              </strong>
-
-              <small>
-                {indicadores.total > 0
-                  ? `${(
-                      (indicadores.totalFixo /
-                        indicadores.total) *
-                      100
-                    ).toFixed(1)}% do total`
-                  : "0% do total"}
-              </small>
-            </div>
-
-            <div className="income-summary-item">
-              <span>Receita variável</span>
-
-              <strong>
-                {formatarMoeda(
-                  indicadores.totalVariavel
-                )}
-              </strong>
-
-              <small>
-                {indicadores.total > 0
-                  ? `${(
-                      (indicadores.totalVariavel /
-                        indicadores.total) *
-                      100
-                    ).toFixed(1)}% do total`
-                  : "0% do total"}
-              </small>
-            </div>
-          </div>
-        </article>
-
-        <article className="dashboard-panel">
-          <div className="dashboard-panel-header">
-            <div>
-              <h2>Próximos módulos</h2>
-
-              <p>
-                Funcionalidades que serão integradas
-                ao dashboard.
-              </p>
-            </div>
-          </div>
-
-          <div className="dashboard-coming-soon">
-            <div>
-              <i className="bi bi-bar-chart-line"></i>
-
-              <span>
-                Despesas
-              </span>
-            </div>
-
-            <div>
-              <i className="bi bi-car-front"></i>
-
-              <span>
-                Financiamento
-              </span>
-            </div>
-
-            <div>
-              <i className="bi bi-pie-chart"></i>
-
-              <span>
-                Relatórios
-              </span>
-            </div>
-
-            <div>
-              <i className="bi bi-piggy-bank"></i>
-
-              <span>
-                Reserva de 30%
-              </span>
-            </div>
-          </div>
-        </article>
-      </section>
-
-      {receitas.length === 0 && !carregandoReceitas && (
-        <section className="dashboard-empty">
-          <div className="dashboard-empty-icon">
-            <i className="bi bi-wallet"></i>
-          </div>
-
-          <h2>Nenhuma receita cadastrada</h2>
-
-          <p>
-            Cadastre sua primeira receita para começar
-            a acompanhar sua vida financeira pelo
-            Dashboard.
-          </p>
+      {carregando ? (
+        <section className="dashboard-estado">
+          Carregando informações financeiras...
         </section>
+      ) : (
+        <>
+          <section className="dashboard-resumo">
+            <article className="dashboard-card dashboard-card--receita">
+              <span className="dashboard-card__rotulo">
+                Total de receitas
+              </span>
+
+              <strong>
+                {formatarMoeda(
+                  resumoFinanceiro.totalReceitas
+                )}
+              </strong>
+
+              <small>
+                {receitas.length}{" "}
+                {receitas.length === 1
+                  ? "receita cadastrada"
+                  : "receitas cadastradas"}
+              </small>
+            </article>
+
+            <article className="dashboard-card dashboard-card--despesa">
+              <span className="dashboard-card__rotulo">
+                Total de despesas
+              </span>
+
+              <strong>
+                {formatarMoeda(
+                  resumoFinanceiro.totalDespesas
+                )}
+              </strong>
+
+              <small>
+                {despesas.length}{" "}
+                {despesas.length === 1
+                  ? "despesa cadastrada"
+                  : "despesas cadastradas"}
+              </small>
+            </article>
+
+            <article
+              className={`dashboard-card ${
+                saldoPositivo
+                  ? "dashboard-card--saldo"
+                  : "dashboard-card--negativo"
+              }`}
+            >
+              <span className="dashboard-card__rotulo">
+                Saldo atual
+              </span>
+
+              <strong>
+                {formatarMoeda(
+                  resumoFinanceiro.saldo
+                )}
+              </strong>
+
+              <small>
+                {saldoPositivo
+                  ? "Saldo positivo"
+                  : "Saldo negativo"}
+              </small>
+            </article>
+
+            <article className="dashboard-card dashboard-card--percentual">
+              <span className="dashboard-card__rotulo">
+                Despesas / receitas
+              </span>
+
+              <strong>
+                {resumoFinanceiro.percentualDespesas.toLocaleString(
+                  "pt-BR",
+                  {
+                    minimumFractionDigits: 1,
+                    maximumFractionDigits: 1,
+                  }
+                )}
+                %
+              </strong>
+
+              <small>
+                Percentual da receita comprometido
+              </small>
+            </article>
+          </section>
+
+          <section className="dashboard-detalhes">
+            <article className="dashboard-painel">
+              <div className="dashboard-painel__cabecalho">
+                <div>
+                  <h2>Resumo financeiro</h2>
+
+                  <p>
+                    Resultado calculado com base
+                    nos registros cadastrados.
+                  </p>
+                </div>
+              </div>
+
+              <div className="dashboard-financeiro">
+                <div className="dashboard-financeiro__linha">
+                  <span>
+                    Receitas
+                  </span>
+
+                  <strong className="dashboard-financeiro__receita">
+                    {formatarMoeda(
+                      resumoFinanceiro.totalReceitas
+                    )}
+                  </strong>
+                </div>
+
+                <div className="dashboard-financeiro__linha">
+                  <span>
+                    Despesas
+                  </span>
+
+                  <strong className="dashboard-financeiro__despesa">
+                    {formatarMoeda(
+                      resumoFinanceiro.totalDespesas
+                    )}
+                  </strong>
+                </div>
+
+                <div className="dashboard-financeiro__separador" />
+
+                <div className="dashboard-financeiro__linha dashboard-financeiro__linha--saldo">
+                  <span>
+                    Saldo
+                  </span>
+
+                  <strong
+                    className={
+                      saldoPositivo
+                        ? "dashboard-financeiro__saldo"
+                        : "dashboard-financeiro__saldo dashboard-financeiro__saldo--negativo"
+                    }
+                  >
+                    {formatarMoeda(
+                      resumoFinanceiro.saldo
+                    )}
+                  </strong>
+                </div>
+              </div>
+            </article>
+
+            <article className="dashboard-painel">
+              <div className="dashboard-painel__cabecalho">
+                <div>
+                  <h2>Movimentações</h2>
+
+                  <p>
+                    Quantidade de registros
+                    financeiros.
+                  </p>
+                </div>
+              </div>
+
+              <div className="dashboard-movimentacoes">
+                <div className="dashboard-movimentacao">
+                  <span>
+                    Receitas
+                  </span>
+
+                  <strong>
+                    {receitas.length}
+                  </strong>
+                </div>
+
+                <div className="dashboard-movimentacao">
+                  <span>
+                    Despesas
+                  </span>
+
+                  <strong>
+                    {despesas.length}
+                  </strong>
+                </div>
+
+                <div className="dashboard-movimentacao">
+                  <span>
+                    Total
+                  </span>
+
+                  <strong>
+                    {receitas.length +
+                      despesas.length}
+                  </strong>
+                </div>
+              </div>
+            </article>
+          </section>
+        </>
       )}
-    </div>
+    </main>
   );
 }
-
-export default Dashboard;

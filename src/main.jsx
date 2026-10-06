@@ -11,15 +11,18 @@ import App from "./App";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ReceitasProvider } from "./contexts/ReceitasContext";
 import { DespesasProvider } from "./contexts/DespesasContext";
+import {
+  FinanciamentosProvider,
+} from "./contexts/FinanciamentosContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <AuthProvider>
-      <ReceitasProvider>
-        <DespesasProvider>
+  <AuthProvider>
+    <ReceitasProvider>
+      <DespesasProvider>
+        <FinanciamentosProvider>
           <App />
-        </DespesasProvider>
-      </ReceitasProvider>
-    </AuthProvider>
-  </React.StrictMode>
+        </FinanciamentosProvider>
+      </DespesasProvider>
+    </ReceitasProvider>
+  </AuthProvider>
 );
