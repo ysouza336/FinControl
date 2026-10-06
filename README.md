@@ -56,3 +56,26 @@ src/
     ├── login.scss
     ├── receitas.scss
     └── dashboard.scss
+
+
+Sprint 04 — Despesas e Dashboard
+Estrutura de despesas no Firestore.
+Service completo de despesas.
+DespesasContext.
+Cadastro de despesas.
+Categorias.
+Formas de pagamento.
+Listagem.
+Edição.
+Exclusão.
+Validações com React Hook Form + Zod.
+Persistência por usuário no Firebase.
+Regras de segurança do Firestore.
+Integração das despesas ao Dashboard.
+Cálculo de:
+Total de receitas.
+Total de despesas.
+Saldo.
+Percentual de despesas sobre receitas.
+Tratamento de saldo negativo.
+Atualização dinâmica dos indicadores.
